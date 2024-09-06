@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Stage 1: Build - Building the code using Maven...'
+                echo 'Stage 1: Build - Building the code using Maven..'
             }
         }
 
