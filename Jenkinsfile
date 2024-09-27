@@ -17,6 +17,19 @@ pipeline {
             steps {
                 echo 'Stage 2: Unit and Integration Tests - Running tests using JUnit and TestNG...'
             }
+            post {
+                always {
+                    script {
+                        echo 'Sending notification emails after Unit and Integration Tests...'
+                        emailext(
+                            subject: "Pipeline ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} - ${currentBuild.result}",
+                            body: "The Unit and Integration Tests stage has finished. Build URL: ${env.BUILD_URL}",
+                            attachLog: true,
+                            to: 'aero.golden7@gmail.com'
+                        )
+                    }
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -28,6 +41,19 @@ pipeline {
         stage('Security Scan') {
             steps {
                 echo 'Stage 4: Security Scan - Performing security scan using OWASP Dependency-Check...'
+            }
+            post {
+                always {
+                    script {
+                        echo 'Sending notification emails after Security Scan...'
+                        emailext(
+                            subject: "Pipeline ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} - ${currentBuild.result}",
+                            body: "The Security Scan stage has finished. Build URL: ${env.BUILD_URL}",
+                            attachLog: true,
+                            to: 'aero.golden7@gmail.com'
+                        )
+                    }
+                }
             }
         }
 
@@ -46,20 +72,6 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 echo 'Stage 7: Deploy to Production - Deploying to AWS EC2 instance...'
-            }
-        }
-    }
-
-    post {
-        always {
-            script {
-                echo 'Sending notification emails...'
-                emailext(
-                    subject: "Pipeline ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} - ${currentBuild.result}",
-                    body: "The buid has finished successfully! Build URL: ${env.BUILD_URL}",
-                    attachLog: true,
-                    to: 'aero.golden7@gmail.com'
-                )
             }
         }
     }
